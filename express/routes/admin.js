@@ -5,7 +5,8 @@ const rootDirectory=require('../utils/pathFinder')
 
 
 router.get('/',(req,res)=>{
-    res.sendFile(path.join(rootDirectory,'/views/add-product.html'))
+    // res.sendFile(path.join(rootDirectory,'/views/add-product.html'))without using templating engine
+    res.render('add-product',{docTitle:'Add Product'})
 })
 // app.post('/message',parser,(req,res)=>{//body-parser package install garera garyo vane function bhitra pass garna pardaina
 const products=[];
