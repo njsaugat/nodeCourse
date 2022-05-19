@@ -1,11 +1,14 @@
 // const bodyParser = require('body-parser');
 const bodyParser=require('body-parser')
 const express=require('express');
-const {router,products}  = require('./routes/admin');
+const {router}  = require('./routes/admin');
 const routerShop  = require('./routes/shop');
 const app=express();
 const path=require('path');
+const { getErrors } = require('./controllers/errors');
+// const {getErrors}
 // const parser=bodyParser.urlencoded({ extended: false })
+app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname)))
 
@@ -13,34 +16,19 @@ app.use(express.static(path.join(__dirname)))
 app.set('view engine','ejs');
 app.set('views','viewsEjs')//to set views to viewsEjs folder;but by default it's set to views; since we already has views set up; created viewsEjs
 
-//************************************************* */
-//code for practising the middleware concept
-// app.use((req,res,next)=>{//runs whenever a request comes
-//     console.log(req.url);
-//     next();
-// })
-// app.use((req,res,next)=>{
-//     console.log('last middleware');
-//     next();//using next here is essential because like app.get is also like a middleware
-// })
-//************************************************* */
 
 app.use('/admin',router);//middleware to kinda bring the router
 app.use('/',routerShop)//like the default page
 
 
 // app.use('/:error',(req,res)=>{//like yo hit garne last ma vako vaera path na rakhda ni hunxa
-app.use((req,res)=>{
-    // res.status(404).sendFile('./views/404.html')
-    // res.status(404).sendFile(path.join(__dirname,'views','404.html'))//without ejs
-    res.status(404).render('404',{docTitle:'Page not Found' })
-})
+app.use(getErrors)
 
 
 
 
 
-const PORT=process.env.PORT||3000;
+const PORT=process.env.PORT||5000;
 app.listen(PORT,()=>(console.log(`Serving from port no. ${PORT}`)))
 
 
@@ -70,3 +58,18 @@ app.listen(PORT,()=>(console.log(`Serving from port no. ${PORT}`)))
 //     // res.send('<h1>data submitted</h1>');
 
 // })
+
+
+
+
+//************************************************* */
+//code for practising the middleware concept
+// app.use((req,res,next)=>{//runs whenever a request comes
+//     console.log(req.url);
+//     next();
+// })
+// app.use((req,res,next)=>{
+//     console.log('last middleware');
+//     next();//using next here is essential because like app.get is also like a middleware
+// })
+//************************************************* */
