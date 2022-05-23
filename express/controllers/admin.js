@@ -41,7 +41,6 @@ const getProductsAdmin=(req,res,next)=>{
 const editProduct=(req,res,next)=>{
     Product.fetchAll(products=>{
         const finalProduct=products.filter((product)=>(product.id===req.params.id))[0]
-        console.log(finalProduct);
         res.render('admin/edit-product',{
             finalProduct,
             docTitle:'Edit Products',
@@ -50,9 +49,29 @@ const editProduct=(req,res,next)=>{
 }
 
 
+const postProduct=(req,res,next)=>{
+    const editObject={ 
+        id:req.params.id,
+        title:req.body.title,
+        imageUrl:req.body.imageUrl,
+        price:req.body.price,
+        description:req.body.description
+
+    }
+    Product.update(req.params.id,editObject);
+    res.redirect('/')
+}
+
+const deleteProduct=(req,res,next)=>{
+    Product.delete(req.params.id);
+    res.redirect('/')
+}
+
 module.exports={
     getAddProduct,
     postAddProduct,
     getProductsAdmin,
-    editProduct
+    editProduct,
+    postProduct,
+    deleteProduct
 }
