@@ -1,42 +1,34 @@
 // const adminData  = require('./admin')
 const { Cart } = require('../models/cart');
 const {Product}=require('../models/productData')
-
+let products=require('../data/productsData.json')
 
 const getProducts=(req, res,next) => {
-    
-    //*******************************already in the page
-    // console.log(adminData.products)
-    // const products1=adminData.products;
-
-    // res.sendFile(path.join(rootDirectory,'/views/shop.html'))//without using templating engine
-    // const products=Product.fetchAll()
-    // // console.log(products)
-    // res.render('shop',{products,
-    //   docTitle:'Shop',
-    //   hasProducts:products.length>0,
-    //   activeShop:true,
-    //   productCSS:true});
-    // }
-    Product.fetchAll((products)=>{
-        res.render('shop/product-list',{products,
+    Product.fetchAll()
+    .then(([dataProduct,unnecessaryData])=>{
+        res.render('shop/product-list',{
+          products:dataProduct,
           docTitle:'Shop',
           hasProducts:products.length>0,
           activeShop:true,
           productCSS:true});
-        
-        // console.log(products)
     })
+    .catch((err)=>(console.log(err)))
+   
+    
 
 }
 
 
-const getProduct=async (req,res,next)=>{
-    const product=await Product.findById(req.params.id)
-    res.render('shop/product-detail',{
-        product,
-        docTitle:'Product Details',
+const getProduct= (req,res,next)=>{
+    Product.findById(req.params.id)
+    .then(([dBproduct,unnecessaryData])=>{
+        res.render('shop/product-detail',{
+            product:dBproduct[0],
+            docTitle:'Product Details',
+        })
     })
+    .catch()
     
 
 }
@@ -44,15 +36,17 @@ const getProduct=async (req,res,next)=>{
 
 
 const getIndex=(req,res,next)=>{
-    Product.fetchAll((products)=>{
-        res.render('shop/index',{products,
-          docTitle:'Shop',
-          hasProducts:products.length>0,
-          activeShop:true,
-          productCSS:true});
-        
-        // console.log(products)
+    Product.fetchAll()
+    .then(([dataProduct,unnecessaryData])=>{
+        res.render('shop/index',{
+            products:dataProduct,
+            docTitle:'Shop',
+            hasProducts:products.length>0,
+            activeShop:true,
+            productCSS:true});
     })
+    .catch((err)=>(console.log(err)))
+      
 }
 
 const getCart=(req,res,next)=>{
@@ -112,3 +106,31 @@ module.exports={
     postCart,
     getOrder
 }
+
+
+// Deprecated code for file
+
+// const getIndexFile=(req,res,next)=>{
+// Product.fetchAll((products)=>{
+//     res.render('shop/index',{products,
+//         docTitle:'Shop',
+//         hasProducts:products.length>0,
+//         activeShop:true,
+//         productCSS:true});
+    
+//     // console.log(products)
+// })
+// }
+
+
+
+
+// const getProductFile=async (req,res,next)=>{
+// const product=await Product.findById(req.params.id)
+// res.render('shop/product-detail',{
+//     product,
+//     docTitle:'Product Details',
+// })
+
+
+// }
