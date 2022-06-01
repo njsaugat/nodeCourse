@@ -13,18 +13,13 @@ const postAddProduct=(req,res)=>{
     const title=req.body.title;
     const imageUrl=req.body.imageUrl;
     const price=req.body.price;
-    const description=req.body.description;
-     
+    const description=req.body.description; 
     const product=new Product(title,imageUrl,price,description)//ho esle ho create garne product lai
-    product.save();
-    // console.log(req.body.title);
-
-    // products.push({title:req.body.title});handled in the model
-
-    // console.log(products)
-    // res.setHeader('Location','/');
-    res.redirect('/');//just like mathiko like location '/' --> esto set garya jast
-    // res.send('<h1>data submitted</h1>');
+    product
+        .save()
+        .then(res.redirect('/') )
+        .catch(err=>console.log(err));
+    ;
 
 }
 
@@ -75,3 +70,23 @@ module.exports={
     postProduct,
     deleteProduct
 }
+
+// depracted file code:
+// const postAddProductFile=(req,res)=>{
+//     const title=req.body.title;
+//     const imageUrl=req.body.imageUrl;
+//     const price=req.body.price;
+//     const description=req.body.description;
+     
+//     const product=new Product(title,imageUrl,price,description)//ho esle ho create garne product lai
+//     product.save();
+//     // console.log(req.body.title);
+
+//     // products.push({title:req.body.title});handled in the model
+
+//     // console.log(products)
+//     // res.setHeader('Location','/');
+//     res.redirect('/');//just like mathiko like location '/' --> esto set garya jast
+//     // res.send('<h1>data submitted</h1>');
+
+// }
