@@ -6,11 +6,19 @@ const routerShop  = require('./routes/shop');
 const app=express();
 const path=require('path');
 const { getErrors } = require('./controllers/errors');
+
+
+
+
+// db.execute('SELECT * FROM products');
+
+
 // const {getErrors}
 // const parser=bodyParser.urlencoded({ extended: false })
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname)))
+
 
 
 app.set('view engine','ejs');
@@ -73,3 +81,10 @@ app.listen(PORT,()=>(console.log(`Serving from port no. ${PORT}`)))
 //     next();//using next here is essential because like app.get is also like a middleware
 // })
 //************************************************* */
+
+//for db connection check
+// db.execute('SELECT * FROM products')
+//     .then((result)=>{
+//         console.log(result[0][0])
+//     })
+//     .catch(err=>console.log(err))
