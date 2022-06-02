@@ -4,27 +4,24 @@ const {Product}=require('../models/productData')
 let products=require('../data/productsData.json')
 
 const getProducts=(req, res,next) => {
-    Product.fetchAll()
-    .then(([dataProduct,unnecessaryData])=>{
+    Product.findAll()//built in method in sequelize
+    .then((products)=>{
         res.render('shop/product-list',{
-          products:dataProduct,
-          docTitle:'Shop',
-          hasProducts:products.length>0,
-          activeShop:true,
-          productCSS:true});
+            products:products,
+            docTitle:'Shop',
+            hasProducts:products.length>0,
+            activeShop:true,
+            productCSS:true});
     })
-    .catch((err)=>(console.log(err)))
-   
-    
-
-}
+    .catch(err=>console.log(err))}
 
 
 const getProduct= (req,res,next)=>{
-    Product.findById(req.params.id)
-    .then(([dBproduct,unnecessaryData])=>{
+    // Product.findAll({where:{id:req.params.id}})//using the where clause
+    Product.findByPk(req.params.id)
+    .then((product)=>{//sequelize auto gives only one product
         res.render('shop/product-detail',{
-            product:dBproduct[0],
+            product,
             docTitle:'Product Details',
         })
     })
@@ -36,16 +33,16 @@ const getProduct= (req,res,next)=>{
 
 
 const getIndex=(req,res,next)=>{
-    Product.fetchAll()
-    .then(([dataProduct,unnecessaryData])=>{
+    Product.findAll()//built in method in sequelize
+    .then((products)=>{
         res.render('shop/index',{
-            products:dataProduct,
+            products:products,
             docTitle:'Shop',
             hasProducts:products.length>0,
             activeShop:true,
             productCSS:true});
     })
-    .catch((err)=>(console.log(err)))
+    .catch(err=>console.log(err))
       
 }
 
@@ -107,8 +104,49 @@ module.exports={
     getOrder
 }
 
+// depracated code for mysql
+
+
+// const getIndex=(req,res,next)=>{
+//     Product.fetchAll()
+//     .then(([dataProduct,unnecessaryData])=>{
+//         res.render('shop/index',{
+//             products:dataProduct,
+//             docTitle:'Shop',
+//             hasProducts:products.length>0,
+//             activeShop:true,
+//             productCSS:true});
+//     })
+//     .catch((err)=>(console.log(err)))
+
+// }
+
+// const getProducts=(req, res,next) => {
+    // Product.fetchAll()
+    // .then(([dataProduct,unnecessaryData])=>{
+    //     res.render('shop/product-list',{
+    //         products:dataProduct,
+    //         docTitle:'Shop',
+    //         hasProducts:products.length>0,
+    //         activeShop:true,
+    //         productCSS:true});
+    // })
+    // .catch((err)=>(console.log(err)))
+    // }
+
+
+
+
+
+
+
+
+
+
+
 
 // Deprecated code for file
+// 
 
 // const getIndexFile=(req,res,next)=>{
 // Product.fetchAll((products)=>{
