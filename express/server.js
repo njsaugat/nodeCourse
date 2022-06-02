@@ -7,7 +7,7 @@ const app=express();
 const path=require('path');
 const { getErrors } = require('./controllers/errors');
 
-
+const sequelize=require('./utils/database')
 
 
 // db.execute('SELECT * FROM products');
@@ -33,13 +33,22 @@ app.use('/',routerShop)//like the default page
 app.use(getErrors)
 
 
-
-
-
 const PORT=process.env.PORT||5000;
-app.listen(PORT,()=>(console.log(`Serving from port no. ${PORT}`)))
+
+sequelize
+    .sync()
+    .then(tableCreator=>{
+        
+        app.listen(PORT,()=>(console.log(`Serving from port no. ${PORT}`)))
+        // console.log(tableCreator);
+
+    })
+    .catch(err=>console.log(err)) 
 
 
+
+
+// app.listen(PORT,()=>(console.log(`Serving from port no. ${PORT}`)))
 
 //****************************************** */
 //note about body-parser like expresss le rakhne narakne gardo raixa; ani
