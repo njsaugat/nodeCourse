@@ -8,7 +8,12 @@ const path=require('path');
 const { getErrors } = require('./controllers/errors');
 
 const sequelize=require('./utils/database')
-
+const Product=require('./models/productData');
+const User=require('./models/user');
+const Cart=require('./models/cart')
+const CartItem=require('./models/cartItem')
+const Order=require('./models/order');
+const OrderItem=require('./models/orderItem')
 
 // db.execute('SELECT * FROM products');
 
@@ -19,7 +24,14 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname)))
 
-
+app.use((req,res,next)=>{//passing the user data through the middleware
+    User.findByPk(1)//but how will this return user while running this app for first time 
+    //it will do so bcz middleware ta suru ma register matra ta hune ho; pahila ta sequelize ko tala ko code run hunxa
+    .then((user)=>{//above stuff returned a promise
+        req.user=user;//req euta object ho; tei object mai user vanera haldine;new field added in req;req.user is sequelize object so sequelize's api can be added
+        next();
+    })
+})
 
 app.set('view engine','ejs');
 app.set('views','viewsEjs')//to set views to viewsEjs folder;but by default it's set to views; since we already has views set up; created viewsEjs
@@ -33,19 +45,48 @@ app.use('/',routerShop)//like the default page
 app.use(getErrors)
 
 
-const PORT=process.env.PORT||5000;
+const PORT=process.env.PORT||3000;
+
+Product.belongsTo(User, { onDelete:'CASCADE'})//Setting the foreign key to like on Delete 'cascade'
+User.hasMany(Product)//kinda optional bcz we have added belongsTo vanne method, so this could've been neglected 
+
+Cart.belongsTo(User);
+User.hasOne(Cart);
+
+Cart.belongsToMany(Product,{through:CartItem})//for many to many reln, we need link table->that link table is cartItem
+Product.belongsToMany(Cart,{through:CartItem})
+
+Order.belongsTo(User);
+User.hasMany(Order);
+
+User.hasMany(Order);
+Order.belongsToMany(Product, {through:OrderItem})
+
 
 sequelize
-    .sync()
-    .then(tableCreator=>{
-        
-        app.listen(PORT,()=>(console.log(`Serving from port no. ${PORT}`)))
+    // .sync({force:true})//done to overwrite previous table's data
+    .sync()//once synced dont overwrite
+    .then(result=>{
+        return User.findByPk(1);//since no user pass dummy user with id 1;// so like first we select user and then pass
+    })
+    .then(user=>{
+        if(!user){//actually above code with return null->if no user
+            return User.create({name:'Max',email:'test@test.com'});
+        }
+        return Promise.resolve(user)//mathi ko le promise return garirathy so resolved into a promise
+    })
+    .then(user=>{
+        // console.log(`User of name ${user.dataValues.name} created.`)//finally gets the user
         // console.log(tableCreator);
-
+        return user.createCart();//to create a cart for the user
+    })
+    .then(cart=>{
+        app.listen(PORT,()=>(console.log(`Serving from port no. ${PORT}`)))
+         
     })
     .catch(err=>console.log(err)) 
-
-
+    
+    
 
 
 // app.listen(PORT,()=>(console.log(`Serving from port no. ${PORT}`)))
