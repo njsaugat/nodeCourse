@@ -1,4 +1,4 @@
-const {Product}=require('../models/productData')
+const Product=require('../models/productData')
 const getAddProduct=(req,res)=>{
     // res.sendFile(path.join(rootDirectory,'/views/add-product.html'))without using templating engine
     res.render('admin/add-product',{
@@ -8,19 +8,22 @@ const getAddProduct=(req,res)=>{
         activeAddProduct:true
     })
 }
-// const products=[];//handled in the model
-const postAddProduct=(req,res)=>{
+
+
+const postAddProduct=(req,res,next)=>{
     const title=req.body.title;
     const imageUrl=req.body.imageUrl;
     const price=req.body.price;
     const description=req.body.description; 
-    //previously with only mySql we had to use save() which would save to db
-    //here also we we could use similar approach by using Product.build-->return only data but not save, but by using create method--> save to db
-    Product.create({
-        title,price,imageUrl,description
-    })
-    .then(result=>console.log('Product created'))//kinda like db.execute    
-    .catch(err=>console.log(err))
+    req.user
+        .createProduct({//like yo chai tyo relation vako hunale+ tyo name ma Product chai Product vanne obj bata ako 
+            title,price,imageUrl,description
+            })
+        .then(result=>{
+            console.log('Product Created')
+            res.redirect('/') 
+        })    
+        .catch(err=>console.log(err))
 
 }
 
@@ -38,6 +41,7 @@ const getProductsAdmin=(req,res,next)=>{
 }
 
 const editProduct=(req,res,next)=>{
+    //req.user.getProducts({where:{id:req.params.id}})->returns arrray so pass one down
     Product.findByPk(req.params.id)
     .then(product=>{
         res.render('admin/edit-product',{
@@ -81,7 +85,7 @@ const deleteProduct=(req,res,next)=>{
 
     
 }
-
+//
 module.exports={
     getAddProduct,
     postAddProduct,
@@ -92,6 +96,25 @@ module.exports={
 }
 
 // depracted mySql code:
+// const postAddProduct=(req,res,next)=>{
+//     const title=req.body.title;
+//     const imageUrl=req.body.imageUrl;
+//     const price=req.body.price;
+//     const description=req.body.description; 
+//     console.log(req.user.id);
+//     Product.create({
+//         title,price,imageUrl,description,
+//         // userId:req.user.id
+//     })
+//     .then(result=>{
+//         console.log('Product created')
+//         res.redirect('/admin/products') 
+//     })    
+//     .catch(err=>console.log(err))   
+// }
+
+
+
 
 // const deleteProduct=(req,res,next)=>{
 //     Product.delete(req.params.id);
