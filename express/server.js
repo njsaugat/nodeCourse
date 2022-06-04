@@ -59,7 +59,6 @@ Product.belongsToMany(Cart,{through:CartItem})
 Order.belongsTo(User);
 User.hasMany(Order);
 
-User.hasMany(Order);
 Order.belongsToMany(Product, {through:OrderItem})
 
 
